@@ -31,3 +31,4 @@
 *
 !calc.y
 !calc.lex
+!Makefile
