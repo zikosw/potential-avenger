@@ -6,16 +6,19 @@
 %}
 
 %token NUMBER
-%token PLUS MINUS TIMES DIVIDE POWER
-%token LEFT RIGHT
+%token PLUS MINUS TIMES DIVIDE MOD POWER
+%token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
 %token END
 
+%left AND OR NOT
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left NEG
 %right POWER
 
 %start Input
+
+
 %%
 
 Input:
@@ -29,14 +32,15 @@ Line:
 ;
 
 Expression:
-               NUMBER { $$=$1; }
-| Expression PLUS Expression { $$=$1+$3; }
-| Expression MINUS Expression { $$=$1-$3; }
-| Expression TIMES Expression { $$=$1*$3; }
-| Expression DIVIDE Expression { $$=$1/$3; }
-| MINUS Expression %prec NEG { $$=-$2; }
-| Expression POWER Expression { $$=pow($1,$3); }
-| LEFT Expression RIGHT { $$=$2; }
+  NUMBER { $$=$1; }
+    | Expression PLUS Expression { $$=$1+$3; }
+    | Expression MINUS Expression { $$=$1-$3; }
+    | Expression TIMES Expression { $$=$1*$3; }
+    | Expression DIVIDE Expression { $$=$1/$3; }
+    | Expression MOD Expression { $$=fmod($1,$3); }
+    | MINUS Expression %prec NEG { $$=-$2; }
+    | Expression POWER Expression { $$=pow($1,$3); }
+    | LEFT Expression RIGHT { $$=$2; }
 ;
 
 %%
