@@ -17,6 +17,14 @@ real {integer}("."{integer})?{exponent}?
  return NUMBER;
 }
 
+"PUSH" return PUSH;
+"POP" return POP;
+
+"$acc" return ACC;
+"$top" return TOP;
+"$size" return SIZE;
+$r{digit} return REGISTER;
+
 "AND" return AND;
 "OR" return OR;
 "NOT" return NOT;

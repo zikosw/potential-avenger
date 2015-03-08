@@ -5,6 +5,9 @@
 #define YYSTYPE double
 %}
 
+%token ACC TOP SIZE REGISTER
+%token PUSH POP
+
 %token NUMBER
 %token PLUS MINUS TIMES DIVIDE MOD POWER
 %token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
@@ -41,6 +44,12 @@ Expression:
     | MINUS Expression %prec NEG { $$=-$2; }
     | Expression POWER Expression { $$=pow($1,$3); }
     | LEFT Expression RIGHT { $$=$2; }
+    | ALEFT Expression ARIGHT { $$=$2; }
+    | BLEFT Expression BRIGHT { $$=$2; }
+    | ACC { $$=9; }
+    | TOP { $$=99; }
+    | SIZE { $$=999; }
+    | REGISTER { $$=9999; }
 ;
 
 %%
