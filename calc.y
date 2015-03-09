@@ -3,9 +3,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define YYSTYPE double
+
+double acc;
+double top;
+int size;
+double r0;
+double r1;
+double r2;
+double r3;
+double r4;
+double r5;
+double r6;
+double r7;
+double r8;
+double r9;
 %}
 
-%token ACC TOP SIZE REGISTER
+%token ACC TOP SIZE REGISTER SHOW COPY TO
 %token PUSH POP
 
 %token NUMBER
@@ -32,24 +46,30 @@ Input:
 Line:
          END
      | Expression END { printf("Result: %f\n", $1); }
+     | Mem END { printf("Result: %f\n", $1); }
 ;
 
 Expression:
-  NUMBER { $$=$1; }
-    | Expression PLUS Expression { $$=$1+$3; }
-    | Expression MINUS Expression { $$=$1-$3; }
-    | Expression TIMES Expression { $$=$1*$3; }
-    | Expression DIVIDE Expression { $$=$1/$3; }
-    | Expression MOD Expression { $$=fmod($1,$3); }
-    | MINUS Expression %prec NEG { $$=-$2; }
-    | Expression POWER Expression { $$=pow($1,$3); }
-    | LEFT Expression RIGHT { $$=$2; }
-    | ALEFT Expression ARIGHT { $$=$2; }
-    | BLEFT Expression BRIGHT { $$=$2; }
-    | ACC { $$=9; }
-    | TOP { $$=99; }
-    | SIZE { $$=999; }
-    | REGISTER { $$=9999; }
+  NUMBER { acc=$1; $$=acc; }
+    | Expression PLUS Expression { acc=$1+$3; $$=acc; }
+    | Expression MINUS Expression { acc=$1-$3; $$=acc; }
+    | Expression TIMES Expression { acc=$1*$3; $$=acc; }
+    | Expression DIVIDE Expression { acc=$1/$3; $$=acc; }
+    | Expression MOD Expression { acc=fmod($1,$3); $$=acc; }
+    | MINUS Expression %prec NEG { acc=-$2; $$=acc; }
+    | Expression POWER Expression { acc=pow($1,$3); $$=acc; }
+    | LEFT Expression RIGHT { acc=$2; $$=acc; }
+    | ALEFT Expression ARIGHT { acc=$2; $$=acc; }
+    | BLEFT Expression BRIGHT { acc=$2; $$=acc; }
+;
+
+Mem:
+  REGISTER { printf("Rx"); }
+  | SHOW {}
+  | COPY REGISTER TO REGISTER {}
+  | ACC { $$=acc; }
+  | TOP { $$=top; }
+  | SIZE { $$=size; }
 ;
 
 %%

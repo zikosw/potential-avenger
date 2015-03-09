@@ -17,13 +17,19 @@ real {integer}("."{integer})?{exponent}?
  return NUMBER;
 }
 
+"SHOW" return SHOW;
+"COPY" return COPY;
+"TO" return TO;
+
 "PUSH" return PUSH;
 "POP" return POP;
 
 "$acc" return ACC;
 "$top" return TOP;
 "$size" return SIZE;
-$r{digit} return REGISTER;
+$r{digit} { 
+ return REGISTER;
+}
 
 "AND" return AND;
 "OR" return OR;
