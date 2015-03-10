@@ -37,8 +37,8 @@ Line:
   END
   | val END {}
   | Expression END { printf("Result: %f\n", $1); }
-  | Memop END { }
   | SHOW val END { printf("Result: %f\n",$2); }
+  | Memop END { }
 ;
 
 Expression:
@@ -74,7 +74,7 @@ val:
   | ACC { $$=r[10]; }
   | TOP { $$=top; }
   | SIZE  { $$=size; }
-
+;
 %%
 
 int yyerror(char *s) {
