@@ -2,11 +2,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define YYSTYPE double
+#define YYSTYPE long long int
 
-double top;
+long long top;
 int size;
-double r[11];
+long long r[11];
 extern char* yytext;
 
 %}
@@ -19,7 +19,6 @@ extern char* yytext;
 %token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
 %token END
 
-%token OTHERS
 
 %left AND OR NOT
 %left PLUS MINUS
@@ -40,28 +39,28 @@ Input:
 
 Line:
   END
-  | BINARY END { printf("BINARY: %f",$1); }
-  | HEX END { printf("HEX: %f",$1); }
   | val END 
-  | Expression END { printf("Result: %f\n", $1); }
-  | SHOW val END { printf("Result: %f\n",$2); }
+  | Expression END { printf("Result: %lld\n", $1); }
+  | SHOW val END { printf("Result: %lld\n",$2); }
   | Memop END 
-  | others END { printf("Syntax error"); }
 
 ;
 
 Expression:
-  NUMBER { r[10]=$1; $$=r[10]; }
-    | Expression PLUS Expression { r[10]=$1+$3; $$=r[10]; }
-    | Expression MINUS Expression { r[10]=$1-$3; $$=r[10]; }
-    | Expression TIMES Expression { r[10]=$1*$3; $$=r[10]; }
-    | Expression DIVIDE Expression { r[10]=$1/$3; $$=r[10]; }
-    | Expression MOD Expression { r[10]=fmod($1,$3); $$=r[10]; }
-    | MINUS Expression %prec NEG { r[10]=-$2; $$=r[10]; }
-    | Expression POWER Expression { r[10]=pow($1,$3); $$=r[10]; }
-    | LEFT Expression RIGHT { r[10]=$2; $$=r[10]; }
-    | ALEFT Expression ARIGHT { r[10]=$2; $$=r[10]; }
-    | BLEFT Expression BRIGHT { r[10]=$2; $$=r[10]; }
+  NUMBER { $$=$1; r[10]=$$; }
+    | Expression PLUS Expression { $$=$1+$3; r[10]=$$; }
+    | Expression MINUS Expression { $$=$1-$3; r[10]=$$; }
+    | Expression TIMES Expression { $$=$1*$3; r[10]=$$; }
+    | Expression DIVIDE Expression { if($3==0){ yyerror("Divide by Zero"); YYERROR; } $$=$1/$3; r[10]=$$; }
+    | Expression MOD Expression { $$=$1%$3; r[10]=$$; }
+    | Expression AND Expression { $$=(int)$1&(int)$3; r[10]=$$; }
+    | Expression OR Expression { $$=(int)$1|(int)$3; r[10]=$$; }
+    | NOT Expression { $$=~$2; r[10]=$$; }
+    | MINUS Expression %prec NEG { r[10]=-$2; r[10]=$$; }
+    | Expression POWER Expression { $$=pow($1,$3); r[10]=$$; }
+    | LEFT Expression RIGHT { $$=$2; r[10]=$$; }
+    | ALEFT Expression ARIGHT { $$=$2; r[10]=$$; }
+    | BLEFT Expression BRIGHT { $$=$2; r[10]=$$; }
     | val { $$=$1; }
 ;
 
@@ -85,14 +84,11 @@ val:
   | SIZE  { $$=size; }
 ;
 
-others:
-  OTHERS
-;
 
 %%
 
 int yyerror(char *s) {
-   printf("%s at expression %s\n", s, yytext);
+   printf("%s , %s\n", s, yytext);
 }
 
 int main() {

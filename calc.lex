@@ -1,5 +1,5 @@
 %{
-#define YYSTYPE double
+#define YYSTYPE long long int
 #include "calc.tab.h"
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +16,7 @@ real {integer}("."{integer})?{exponent}?
 {white} { }
 
 [01]+b {
-  yylval=0;
+
   int dec=0,i=0;
   for(i=0;i<strlen(yytext)-1;i++){
     dec=dec*2+(yytext[i]-'0');
@@ -26,7 +26,7 @@ real {integer}("."{integer})?{exponent}?
 }
 
 [0-9a-fA-F]+h {
-  yylval=0;
+
   int dec=0,i=0,val=0;
   for(i=0;i<strlen(yytext)-1;i++){
     if(yytext[i]<='9')
@@ -42,8 +42,9 @@ real {integer}("."{integer})?{exponent}?
   return NUMBER;
 }
 
-{real} { yylval=atof(yytext);
- return NUMBER;
+{real} {
+  sscanf(yytext,"%llu",&yylval);
+  return NUMBER;
 }
 
 "SHOW" return SHOW;
@@ -80,5 +81,4 @@ $r{digit} {
 "}" return BRIGHT;
 
 "\n" return END;
-.+ return OTHERS;
 
