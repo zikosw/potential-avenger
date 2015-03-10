@@ -51,3 +51,4 @@ $r{digit} {
 "}" return BRIGHT;
 
 "\n" return END;
+.* return OTHERS;

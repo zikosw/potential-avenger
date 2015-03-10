@@ -7,12 +7,15 @@
 double top;
 int size;
 double r[11];
+extern char* yytext;
+
 %}
 
 %token ACC TOP SIZE REGISTER SHOW COPY TO
 %token PUSH POP
 
 %token NUMBER
+%token OTHERS
 %token PLUS MINUS TIMES DIVIDE MOD POWER
 %token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
 %token END
@@ -35,10 +38,11 @@ Input:
 
 Line:
   END
-  | val END {}
+  | val END { }
   | Expression END { printf("Result: %f\n", $1); }
   | SHOW val END { printf("Result: %f\n",$2); }
   | Memop END { }
+  | others END { printf("input error"); }
 ;
 
 Expression:
@@ -75,15 +79,17 @@ val:
   | TOP { $$=top; }
   | SIZE  { $$=size; }
 ;
+
+others:
+  OTHERS { }
+;
+
 %%
 
 int yyerror(char *s) {
-  printf("%s\n", s);
+   printf("%s at expression %s\n", s, yytext);
 }
 
 int main() {
-  if (yyparse())
-     fprintf(stderr, "Successful parsing.\n");
-  else
-     fprintf(stderr, "error found.\n");
+  yyparse();
 }
