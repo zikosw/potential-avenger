@@ -27,8 +27,9 @@ real {integer}("."{integer})?{exponent}?
 "$acc" return ACC;
 "$top" return TOP;
 "$size" return SIZE;
-$r{digit} { 
- return REGISTER;
+$r{digit} {
+  yylval=yytext[2]-'0';
+  return REGISTER;
 }
 
 "AND" return AND;

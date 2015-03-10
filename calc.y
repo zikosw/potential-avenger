@@ -7,16 +7,7 @@
 double acc;
 double top;
 int size;
-double r0;
-double r1;
-double r2;
-double r3;
-double r4;
-double r5;
-double r6;
-double r7;
-double r8;
-double r9;
+double r[10];
 %}
 
 %token ACC TOP SIZE REGISTER SHOW COPY TO
@@ -46,7 +37,8 @@ Input:
 Line:
          END
      | Expression END { printf("Result: %f\n", $1); }
-     | Mem END { printf("Result: %f\n", $1); }
+     | Memop END { printf("Result: %f\n", $1); }
+     | reg END { printf("Result: %f\n", $1); }
 ;
 
 Expression:
@@ -63,14 +55,25 @@ Expression:
     | BLEFT Expression BRIGHT { acc=$2; $$=acc; }
 ;
 
-Mem:
-  REGISTER { printf("Rx"); }
-  | SHOW {}
-  | COPY REGISTER TO REGISTER {}
+Memop:
+  | SHOW reg {}
+  | COPY val TO reg {
+      r[$4]=r[$2];
+    }
+  | PUSH reg {}
+  | POP reg {}
+;
+
+reg:
+  REGISTER { $$=(int)yylval; }
+  | ACC { $$=10; }
+;
+
+val:
+  REGISTER { $$=r[(int)yylval]; }
   | ACC { $$=acc; }
   | TOP { $$=top; }
-  | SIZE { $$=size; }
-;
+  | SIZE  { $$=size; }
 
 %%
 
