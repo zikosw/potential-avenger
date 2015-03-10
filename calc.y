@@ -14,17 +14,19 @@ extern char* yytext;
 %token ACC TOP SIZE REGISTER SHOW COPY TO
 %token PUSH POP
 
-%token NUMBER
-%token OTHERS
+%token BINARY HEX NUMBER
 %token PLUS MINUS TIMES DIVIDE MOD POWER
 %token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
 %token END
+
+%token OTHERS
 
 %left AND OR NOT
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left NEG
 %right POWER
+
 
 %start Input
 
@@ -38,11 +40,14 @@ Input:
 
 Line:
   END
-  | val END { }
+  | BINARY END { printf("BINARY: %f",$1); }
+  | HEX END { printf("HEX: %f",$1); }
+  | val END 
   | Expression END { printf("Result: %f\n", $1); }
   | SHOW val END { printf("Result: %f\n",$2); }
-  | Memop END { }
-  | others END { printf("input error"); }
+  | Memop END 
+  | others END { printf("Syntax error"); }
+
 ;
 
 Expression:
@@ -81,7 +86,7 @@ val:
 ;
 
 others:
-  OTHERS { }
+  OTHERS
 ;
 
 %%
