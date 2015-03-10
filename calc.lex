@@ -82,8 +82,4 @@ $r{digit} {
 "}" return BRIGHT;
 
 "\n" return END;
-<<<<<<< HEAD
-
-=======
 {other} return OTHERS;
->>>>>>> errorHandler

@@ -4,15 +4,13 @@
 #include <stdlib.h>
 #define YYSTYPE long long int
 
-long long top;
-int size;
 long long r[11];
 extern char* yytext;
 struct stack
 {
-    int *stk;
-    int top;
-    int maxsize;
+    long long int *stk;
+    long long int top;
+    long long int maxsize;
 };
 typedef struct stack STACK;
 STACK st;
@@ -20,14 +18,14 @@ STACK st;
 void create(STACK *s){
     (*s).top = -1;
     (*s).maxsize = 100;
-    (*s).stk = (int *) malloc(((*s).maxsize)*sizeof(int));
+    (*s).stk = (long long int *) malloc(((*s).maxsize)*sizeof(long long int));
 }
 
 void copy(STACK *s){
-    int *tmp;
-    int i;
+    long long int *tmp;
+    long long int i;
     (*s).maxsize *= 2;
-    tmp = (int *) malloc(((*s).maxsize)*sizeof(int));
+    tmp = (long long int *) malloc(((*s).maxsize)*sizeof(long long int));
     for (i = (*s).top; i >= 0; i--){
             printf("hell");
         tmp[i] = (*s).stk[i];
@@ -36,7 +34,7 @@ void copy(STACK *s){
     (*s).stk = tmp;
 }
 
-void push (STACK *s,const int num){
+void push (STACK *s,const long long int num){
     if ((*s).top != ((*s).maxsize - 1)){
         (*s).stk[++((*s).top)]= num;
     }else{
@@ -45,9 +43,9 @@ void push (STACK *s,const int num){
     }
 }
 
-int pop (STACK *s){
+long long int pop (STACK *s){
     if ((*s).top != - 1){
-        printf ("poped element is = %d\n",(*s).stk[(*s).top]);
+        printf ("poped element is = %llu\n",(*s).stk[(*s).top]);
         return (*s).stk[(*s).top--];
     }else{
         printf ("Stack is Empty\n");
@@ -56,22 +54,22 @@ int pop (STACK *s){
 }
 
 void display (STACK *s){
-    int i;
+    long long int i;
     if ((*s).top == -1){
         printf ("Stack is empty\n");
     }else{
         printf ("\n The status of the stack is \n");
         for (i = (*s).top; i >= 0; i--){
-            printf ("%d\n", (*s).stk[i]);
+            printf ("%llu\n", (*s).stk[i]);
         }
     }
     printf ("\n");
 }
 
 
-int top (STACK *s){
+long long int top (STACK *s){
     if ((*s).top != - 1){
-        printf ("%d\n", (*s).stk[(*s).top]);
+        printf ("%llu\n", (*s).stk[(*s).top]);
         return (*s).stk[(*s).top];
     }else{
         printf ("Stack is Empty\n");
@@ -79,9 +77,9 @@ int top (STACK *s){
     }
 }
 
-int size(STACK *s){
-    int size = ((*s).top)+1;
-    printf ("%d\n", size);
+long long int size(STACK *s){
+    long long int size = ((*s).top)+1;
+    printf ("%llu\n", size);
     return size;
 }
 
@@ -90,10 +88,10 @@ int size(STACK *s){
 %token ACC TOP SIZE REGISTER SHOW COPY TO
 %token PUSH POP
 
-%token BINARY HEX NUMBER
+%token NUMBER
 %token PLUS MINUS TIMES DIVIDE MOD POWER
 %token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
-%token END
+%token END OTHERS
 
 
 %left AND OR NOT
@@ -119,7 +117,7 @@ Line:
   | Expression END { printf("Result: %lld\n", $1); }
   | SHOW val END { printf("Result: %lld\n",$2); }
   | Memop END 
-  | others END { printf("syntax error"); }
+  | OTHERS END { printf("syntax error"); }
 ;
 
 Expression:
@@ -169,8 +167,5 @@ int yyerror(char *s) {
 
 int main() {
   create(&st);
-  if (yyparse())
-     fprintf(stderr, "Successful parsing.\n");
-  else
-     fprintf(stderr, "error found.\n");
+  yyparse();
 }
