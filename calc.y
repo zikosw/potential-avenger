@@ -4,10 +4,9 @@
 #include <stdlib.h>
 #define YYSTYPE double
 
-double acc;
 double top;
 int size;
-double r[10];
+double r[11];
 %}
 
 %token ACC TOP SIZE REGISTER SHOW COPY TO
@@ -35,30 +34,31 @@ Input:
 ;
 
 Line:
-         END
-     | Expression END { printf("Result: %f\n", $1); }
-     | Memop END { printf("Result: %f\n", $1); }
-     | reg END { printf("Result: %f\n", $1); }
+  END
+  | val END {}
+  | Expression END { printf("Result: %f\n", $1); }
+  | Memop END { }
+  | SHOW val END { printf("Result: %f\n",$2); }
 ;
 
 Expression:
-  NUMBER { acc=$1; $$=acc; }
-    | Expression PLUS Expression { acc=$1+$3; $$=acc; }
-    | Expression MINUS Expression { acc=$1-$3; $$=acc; }
-    | Expression TIMES Expression { acc=$1*$3; $$=acc; }
-    | Expression DIVIDE Expression { acc=$1/$3; $$=acc; }
-    | Expression MOD Expression { acc=fmod($1,$3); $$=acc; }
-    | MINUS Expression %prec NEG { acc=-$2; $$=acc; }
-    | Expression POWER Expression { acc=pow($1,$3); $$=acc; }
-    | LEFT Expression RIGHT { acc=$2; $$=acc; }
-    | ALEFT Expression ARIGHT { acc=$2; $$=acc; }
-    | BLEFT Expression BRIGHT { acc=$2; $$=acc; }
+  NUMBER { r[10]=$1; $$=r[10]; }
+    | Expression PLUS Expression { r[10]=$1+$3; $$=r[10]; }
+    | Expression MINUS Expression { r[10]=$1-$3; $$=r[10]; }
+    | Expression TIMES Expression { r[10]=$1*$3; $$=r[10]; }
+    | Expression DIVIDE Expression { r[10]=$1/$3; $$=r[10]; }
+    | Expression MOD Expression { r[10]=fmod($1,$3); $$=r[10]; }
+    | MINUS Expression %prec NEG { r[10]=-$2; $$=r[10]; }
+    | Expression POWER Expression { r[10]=pow($1,$3); $$=r[10]; }
+    | LEFT Expression RIGHT { r[10]=$2; $$=r[10]; }
+    | ALEFT Expression ARIGHT { r[10]=$2; $$=r[10]; }
+    | BLEFT Expression BRIGHT { r[10]=$2; $$=r[10]; }
+    | val { $$=$1; }
 ;
 
 Memop:
-  | SHOW reg {}
-  | COPY val TO reg {
-      r[$4]=r[$2];
+  COPY val TO reg {
+      r[(int)$4]=$2;
     }
   | PUSH reg {}
   | POP reg {}
@@ -71,7 +71,7 @@ reg:
 
 val:
   REGISTER { $$=r[(int)yylval]; }
-  | ACC { $$=acc; }
+  | ACC { $$=r[10]; }
   | TOP { $$=top; }
   | SIZE  { $$=size; }
 
