@@ -8,6 +8,82 @@ long long top;
 int size;
 long long r[11];
 extern char* yytext;
+struct stack
+{
+    int *stk;
+    int top;
+    int maxsize;
+};
+typedef struct stack STACK;
+STACK st;
+
+void create(STACK *s){
+    (*s).top = -1;
+    (*s).maxsize = 100;
+    (*s).stk = (int *) malloc(((*s).maxsize)*sizeof(int));
+}
+
+void copy(STACK *s){
+    int *tmp;
+    int i;
+    (*s).maxsize *= 2;
+    tmp = (int *) malloc(((*s).maxsize)*sizeof(int));
+    for (i = (*s).top; i >= 0; i--){
+            printf("hell");
+        tmp[i] = (*s).stk[i];
+    }
+    free((*s).stk);
+    (*s).stk = tmp;
+}
+
+void push (STACK *s,const int num){
+    if ((*s).top != ((*s).maxsize - 1)){
+        (*s).stk[++((*s).top)]= num;
+    }else{
+        copy(&(*s));
+        (*s).stk[++((*s).top)]= num;
+    }
+}
+
+int pop (STACK *s){
+    if ((*s).top != - 1){
+        printf ("poped element is = %d\n",(*s).stk[(*s).top]);
+        return (*s).stk[(*s).top--];
+    }else{
+        printf ("Stack is Empty\n");
+        return ((*s).top);
+    }
+}
+
+void display (STACK *s){
+    int i;
+    if ((*s).top == -1){
+        printf ("Stack is empty\n");
+    }else{
+        printf ("\n The status of the stack is \n");
+        for (i = (*s).top; i >= 0; i--){
+            printf ("%d\n", (*s).stk[i]);
+        }
+    }
+    printf ("\n");
+}
+
+
+int top (STACK *s){
+    if ((*s).top != - 1){
+        printf ("%d\n", (*s).stk[(*s).top]);
+        return (*s).stk[(*s).top];
+    }else{
+        printf ("Stack is Empty\n");
+        return (*s).top;
+    }
+}
+
+int size(STACK *s){
+    int size = ((*s).top)+1;
+    printf ("%d\n", size);
+    return size;
+}
 
 %}
 
@@ -68,8 +144,8 @@ Memop:
   COPY val TO reg {
       r[(int)$4]=$2;
     }
-  | PUSH reg {}
-  | POP reg {}
+  | PUSH reg { push(&st,$2); }
+  | POP reg { $$=pop(&st); }
 ;
 
 reg:
@@ -80,8 +156,8 @@ reg:
 val:
   REGISTER { $$=r[(int)yylval]; }
   | ACC { $$=r[10]; }
-  | TOP { $$=top; }
-  | SIZE  { $$=size; }
+  | TOP { $$=top(&st); }
+  | SIZE  { $$=size(&st); }
 ;
 
 
@@ -92,5 +168,9 @@ int yyerror(char *s) {
 }
 
 int main() {
-  yyparse();
+  create(&st);
+  if (yyparse())
+     fprintf(stderr, "Successful parsing.\n");
+  else
+     fprintf(stderr, "error found.\n");
 }
