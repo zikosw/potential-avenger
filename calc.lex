@@ -10,6 +10,7 @@ digit [0-9]
 integer {digit}+
 exponent [eE][+-]?{integer}
 real {integer}("."{integer})?{exponent}?
+other [^\+\-\*\/\\\^\(\)\[\]\{\}0-9]
 
 %%
 
@@ -81,4 +82,8 @@ $r{digit} {
 "}" return BRIGHT;
 
 "\n" return END;
+<<<<<<< HEAD
 
+=======
+{other} return OTHERS;
+>>>>>>> errorHandler

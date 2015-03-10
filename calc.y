@@ -43,7 +43,7 @@ Line:
   | Expression END { printf("Result: %lld\n", $1); }
   | SHOW val END { printf("Result: %lld\n",$2); }
   | Memop END 
-
+  | others END { printf("syntax error"); }
 ;
 
 Expression:
@@ -88,7 +88,7 @@ val:
 %%
 
 int yyerror(char *s) {
-   printf("%s , %s\n", s, yytext);
+   printf("%s", s);
 }
 
 int main() {
