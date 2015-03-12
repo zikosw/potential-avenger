@@ -33,6 +33,12 @@ void copy(STACK *s){
     (*s).stk = tmp;
 }
 
+long long int size(STACK *s){
+    long long int size = ((*s).top)+1;
+    //printf ("%llu\n", size);
+    return size;
+}
+
 void push (STACK *s,const long long int num){
     if ((*s).top != ((*s).maxsize - 1)){
         (*s).stk[++((*s).top)]= num;
@@ -42,13 +48,13 @@ void push (STACK *s,const long long int num){
     }
 }
 
-long long int pop (STACK *s){
-    if ((*s).top != - 1){
+void pop (STACK *s,int reg){
+    long long int local_size = size(s);
+    if ( local_size > (long long int)0){
        //printf ("poped element is = %llu\n",(*s).stk[(*s).top]);
-        return (*s).stk[(*s).top--];
+        r[reg] = (*s).stk[(*s).top--];
     }else{
-        //printf ("Stack is Empty\n");
-        return ((*s).top);
+        yyerror();
     }
 }
 
@@ -71,15 +77,9 @@ long long int top (STACK *s){
        //printf ("%llu\n", (*s).stk[(*s).top]);
         return (*s).stk[(*s).top];
     }else{
-        //printf ("Stack is Empty\n");
+        yyerror();
         return (*s).top;
     }
-}
-
-long long int size(STACK *s){
-    long long int size = ((*s).top)+1;
-    //printf ("%llu\n", size);
-    return size;
 }
 
 %}
@@ -116,7 +116,8 @@ Line:
   | Expression END { printf("Result: %lld\n", $1); }
   | SHOW val END { printf("Result: %lld\n",$2); }
   | Memop END 
-  | OTHERS END { printf("syntax error"); }
+  | OTHERS END { yyerror(); }
+  | error END { }
 ;
 
 Expression:
@@ -124,7 +125,7 @@ Expression:
     | Expression PLUS Expression { $$=$1+$3; r[10]=$$; }
     | Expression MINUS Expression { $$=$1-$3; r[10]=$$; }
     | Expression TIMES Expression { $$=$1*$3; r[10]=$$; }
-    | Expression DIVIDE Expression { if($3==0){ yyerror("Divide by Zero"); YYERROR; } $$=$1/$3; r[10]=$$; }
+    | Expression DIVIDE Expression { if($3==0){ yyerror(); } $$=$1/$3; r[10]=$$; }
     | Expression MOD Expression { $$=$1%$3; r[10]=$$; }
     | Expression AND Expression { $$=(int)$1&(int)$3; r[10]=$$; }
     | Expression OR Expression { $$=(int)$1|(int)$3; r[10]=$$; }
@@ -142,7 +143,7 @@ Memop:
       r[(int)$4]=$2;
     }
   | PUSH val { push(&st,$2); }
-  | POP reg { r[$2]=pop(&st); }
+  | POP reg { pop(&st,$2); }
 ;
 
 reg:
@@ -160,8 +161,8 @@ val:
 
 %%
 
-int yyerror(char *s) {
-   printf("%s", s);
+int yyerror() {
+   printf("ERROR! \n");
 }
 
 int main() {
