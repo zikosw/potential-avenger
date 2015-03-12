@@ -6,6 +6,7 @@
 
 long long r[11];
 extern char* yytext;
+int flag = 0;
 struct stack
 {
     long long int *stk;
@@ -55,6 +56,7 @@ void pop (STACK *s,int reg){
         r[reg] = (*s).stk[(*s).top--];
     }else{
         yyerror();
+        flag = 0;
     }
 }
 
@@ -78,6 +80,7 @@ long long int top (STACK *s){
         return (*s).stk[(*s).top];
     }else{
         yyerror();
+        flag = 0;
         return (*s).top;
     }
 }
@@ -111,13 +114,12 @@ Input:
 ;
 
 Line:
-  END
-  | val END { printf("syntax error"); }
+  END { } 
+  | val END { yyerror(); }
   | Expression END { printf("Result: %lld\n", $1); }
   | SHOW val END { printf("Result: %lld\n",$2); }
   | Memop END 
-  | OTHERS END { yyerror(); }
-  | error END { }
+  | error END { yyerror(); flag = 0; }
 ;
 
 Expression:
@@ -162,7 +164,10 @@ val:
 %%
 
 int yyerror() {
+  if (flag == 0){
    printf("ERROR! \n");
+   flag = 1;
+  }
 }
 
 int main() {
