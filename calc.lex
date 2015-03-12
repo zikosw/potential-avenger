@@ -39,7 +39,6 @@ other [^\+\-\*\/\\\^\(\)\[\]\{\}0-9]
     dec=dec*16+val;
   }
   yylval=dec;
-  sscanf(yytext,"%x",&yylval);
   return NUMBER;
 }
 

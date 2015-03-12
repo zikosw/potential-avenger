@@ -27,7 +27,6 @@ void copy(STACK *s){
     (*s).maxsize *= 2;
     tmp = (long long int *) malloc(((*s).maxsize)*sizeof(long long int));
     for (i = (*s).top; i >= 0; i--){
-            printf("hell");
         tmp[i] = (*s).stk[i];
     }
     free((*s).stk);
@@ -45,10 +44,10 @@ void push (STACK *s,const long long int num){
 
 long long int pop (STACK *s){
     if ((*s).top != - 1){
-        printf ("poped element is = %llu\n",(*s).stk[(*s).top]);
+       //printf ("poped element is = %llu\n",(*s).stk[(*s).top]);
         return (*s).stk[(*s).top--];
     }else{
-        printf ("Stack is Empty\n");
+        //printf ("Stack is Empty\n");
         return ((*s).top);
     }
 }
@@ -56,12 +55,12 @@ long long int pop (STACK *s){
 void display (STACK *s){
     long long int i;
     if ((*s).top == -1){
-        printf ("Stack is empty\n");
+        //printf ("Stack is empty\n");
     }else{
-        printf ("\n The status of the stack is \n");
+       /* printf ("\n The status of the stack is \n");
         for (i = (*s).top; i >= 0; i--){
             printf ("%llu\n", (*s).stk[i]);
-        }
+        } */
     }
     printf ("\n");
 }
@@ -69,17 +68,17 @@ void display (STACK *s){
 
 long long int top (STACK *s){
     if ((*s).top != - 1){
-        printf ("%llu\n", (*s).stk[(*s).top]);
+       //printf ("%llu\n", (*s).stk[(*s).top]);
         return (*s).stk[(*s).top];
     }else{
-        printf ("Stack is Empty\n");
+        //printf ("Stack is Empty\n");
         return (*s).top;
     }
 }
 
 long long int size(STACK *s){
     long long int size = ((*s).top)+1;
-    printf ("%llu\n", size);
+    //printf ("%llu\n", size);
     return size;
 }
 
@@ -113,7 +112,7 @@ Input:
 
 Line:
   END
-  | val END 
+  | val END { printf("syntax error"); }
   | Expression END { printf("Result: %lld\n", $1); }
   | SHOW val END { printf("Result: %lld\n",$2); }
   | Memop END 
@@ -130,7 +129,7 @@ Expression:
     | Expression AND Expression { $$=(int)$1&(int)$3; r[10]=$$; }
     | Expression OR Expression { $$=(int)$1|(int)$3; r[10]=$$; }
     | NOT Expression { $$=~$2; r[10]=$$; }
-    | MINUS Expression %prec NEG { r[10]=-$2; r[10]=$$; }
+    | MINUS Expression %prec NEG { $$=-$2; r[10]=$$; }
     | Expression POWER Expression { $$=pow($1,$3); r[10]=$$; }
     | LEFT Expression RIGHT { $$=$2; r[10]=$$; }
     | ALEFT Expression ARIGHT { $$=$2; r[10]=$$; }
@@ -142,8 +141,8 @@ Memop:
   COPY val TO reg {
       r[(int)$4]=$2;
     }
-  | PUSH reg { push(&st,$2); }
-  | POP reg { $$=pop(&st); }
+  | PUSH val { push(&st,$2); }
+  | POP reg { r[$2]=pop(&st); }
 ;
 
 reg:
@@ -154,7 +153,7 @@ reg:
 val:
   REGISTER { $$=r[(int)yylval]; }
   | ACC { $$=r[10]; }
-  | TOP { $$=top(&st); }
+  | TOP { $$=top(&st); } 
   | SIZE  { $$=size(&st); }
 ;
 
