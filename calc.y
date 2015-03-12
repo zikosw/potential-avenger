@@ -4,8 +4,12 @@
 #include <stdlib.h>
 #define YYSTYPE long long int
 
+
 long long r[11];
 extern char* yytext;
+/***
+ * STACK IMPLEMENTATION   
+ ***/
 struct stack
 {
     long long int *stk;
@@ -35,7 +39,6 @@ void copy(STACK *s){
 
 long long int size(STACK *s){
     long long int size = ((*s).top)+1;
-    //printf ("%llu\n", size);
     return size;
 }
 
@@ -51,30 +54,15 @@ void push (STACK *s,const long long int num){
 void pop (STACK *s,int reg){
     long long int local_size = size(s);
     if ( local_size > (long long int)0){
-       //printf ("poped element is = %llu\n",(*s).stk[(*s).top]);
         r[reg] = (*s).stk[(*s).top--];
     }else{
         yyerror();
     }
 }
 
-void display (STACK *s){
-    long long int i;
-    if ((*s).top == -1){
-        //printf ("Stack is empty\n");
-    }else{
-       /* printf ("\n The status of the stack is \n");
-        for (i = (*s).top; i >= 0; i--){
-            printf ("%llu\n", (*s).stk[i]);
-        } */
-    }
-    printf ("\n");
-}
-
 
 long long int top (STACK *s){
     if ((*s).top != - 1){
-       //printf ("%llu\n", (*s).stk[(*s).top]);
         return (*s).stk[(*s).top];
     }else{
         yyerror();
@@ -83,7 +71,7 @@ long long int top (STACK *s){
 }
 
 %}
-
+//token declaration 
 %token ACC TOP SIZE REGISTER SHOW COPY TO
 %token PUSH POP
 
@@ -92,14 +80,14 @@ long long int top (STACK *s){
 %token LEFT RIGHT ALEFT ARIGHT BLEFT BRIGHT
 %token END OTHERS
 
-
+//operator token declaration 
 %left AND OR NOT
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left NEG
 %right POWER
 
-
+//User input token
 %start Input
 
 
@@ -107,8 +95,9 @@ long long int top (STACK *s){
 
 Input:
          
-     | Input Line
+     | Input Line 
 ;
+
 
 Line:
   END
@@ -120,6 +109,12 @@ Line:
   | error END { }
 ;
 
+/*** 
+ * Expression grammar match string pattern and do code in curly bracket
+ * $1 = first tokens , $2 = second tokens ,so $N = N tokens ....
+ * $$ = answer ... 
+ * r[10] is register number 10 ,which defined as accumulator.
+ ***/
 Expression:
   NUMBER { $$=$1; r[10]=$$; }
     | Expression PLUS Expression { $$=$1+$3; r[10]=$$; }
@@ -138,6 +133,9 @@ Expression:
     | val { $$=$1; }
 ;
 
+/***
+ * assign value to register number = reg  
+ ***/
 Memop:
   COPY val TO reg {
       r[(int)$4]=$2;
@@ -146,11 +144,17 @@ Memop:
   | POP reg { pop(&st,$2); }
 ;
 
+/***
+ * register number    
+ ***/
 reg:
   REGISTER { $$=(int)yylval; }
   | ACC { $$=10; }
 ;
 
+/***
+ * Every value is stored in register array,so we get it from register array.   
+ ***/
 val:
   REGISTER { $$=r[(int)yylval]; }
   | ACC { $$=r[10]; }
@@ -160,7 +164,9 @@ val:
 
 
 %%
-
+/***
+ * Error handler 
+ ***/
 int yyerror() {
    printf("ERROR! \n");
 }

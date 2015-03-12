@@ -1,10 +1,11 @@
+
 %{
 #define YYSTYPE long long int
 #include "calc.tab.h"
 #include <stdlib.h>
 #include <string.h>
 %}
-
+// use RegEx to assign tokens pattern .. 
 white [ \t]+
 digit [0-9]
 integer {digit}+
@@ -46,6 +47,10 @@ other [^\+\-\*\/\\\^\(\)\[\]\{\}0-9]
   sscanf(yytext,"%llu",&yylval);
   return NUMBER;
 }
+
+/***
+ * Return tokens 
+ ***/
 
 "SHOW" return SHOW;
 "COPY" return COPY;
