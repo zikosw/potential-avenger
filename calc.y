@@ -127,8 +127,8 @@ Expression:
     | Expression PLUS Expression { $$=$1+$3; r[10]=$$; }
     | Expression MINUS Expression { $$=$1-$3; r[10]=$$; }
     | Expression TIMES Expression { $$=$1*$3; r[10]=$$; }
-    | Expression DIVIDE Expression { if($3==0){ yyerror(); } $$=$1/$3; r[10]=$$; }
-    | Expression MOD Expression { $$=$1%$3; r[10]=$$; }
+    | Expression DIVIDE Expression { if($3==0){ yyerror(); } else {$$=$1/$3; r[10]=$$; }}
+    | Expression MOD Expression { if($3==0){ yyerror(); } else {$$=$1%$3; r[10]=$$; }}
     | Expression AND Expression { $$=(int)$1&(int)$3; r[10]=$$; }
     | Expression OR Expression { $$=(int)$1|(int)$3; r[10]=$$; }
     | NOT Expression { $$=~$2; r[10]=$$; }
